@@ -34,7 +34,7 @@ class HttpClientSpy extends Mock implements HttpClient {
     Map? body,
   }) async {
     super.noSuchMethod(
-      Invocation.method(#request, [url, method]),
+      Invocation.method(#request, [url, method, body]),
       returnValue: Future.value(),
     );
   }

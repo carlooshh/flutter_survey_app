@@ -8,18 +8,31 @@ class RemoteAuthentication {
 
   RemoteAuthentication({required this.httpClient, required this.url});
 
-  Future<void> auth() async {
-    await httpClient.request(url: url, method: 'post');
+  Future<void> auth(RemoteAuthenticationParams params) async {
+    await httpClient.request(url: url, method: 'post', body: params.toJson());
   }
 }
 
+class RemoteAuthenticationParams {
+  final String email;
+  final String password;
+
+  RemoteAuthenticationParams({required this.email, required this.password});
+
+  toJson() => {'email': email, 'password': password};
+}
+
 abstract class HttpClient {
-  Future<void> request({required String url, required String method});
+  Future<void> request({required String url, required String method, Map body});
 }
 
 class HttpClientSpy extends Mock implements HttpClient {
   @override
-  Future<void> request({required String url, required String method}) async {
+  Future<void> request({
+    required String url,
+    required String method,
+    Map? body,
+  }) async {
     super.noSuchMethod(
       Invocation.method(#request, [url, method]),
       returnValue: Future.value(),
@@ -40,10 +53,13 @@ void main() {
   });
 
   test('Should call httpClient with the correct URL', () async {
+    final params = RemoteAuthenticationParams(
+        email: faker.internet.email(), password: faker.internet.password());
+
     // Act
-    await sut.auth();
+    await sut.auth(params);
 
     // Assert
-    verify(httpClient.request(url: url, method: 'post'));
+    verify(httpClient.request(url: url, method: 'post', body: params.toJson()));
   });
 }

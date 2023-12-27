@@ -80,7 +80,7 @@ void main() {
     expect(future, throwsA(DomainError.unexpected));
   });
 
-  test('Should throw a invalidCredentialsErros when httpClient returns 401',
+  test('Should throw a invalidCredentialsError when httpClient returns 401',
       () async {
     when(httpClient.request(
             url: url, method: anyNamed('method'), body: anyNamed('body')))
@@ -105,5 +105,21 @@ void main() {
 
     // Assert
     expect(account.token, accessToken);
+  });
+
+  test(
+      'Should throw an unexpected error when httpClient returns 200, but with invalid response data',
+      () async {
+    when(httpClient.request(
+            url: url, method: anyNamed('method'), body: anyNamed('body')))
+        .thenAnswer((_) async => {
+              "invalid_key": 'invalid_value',
+            });
+
+    // Act
+    final future = sut.auth(params);
+
+    // Assert
+    expect(future, throwsA(DomainError.unexpected));
   });
 }

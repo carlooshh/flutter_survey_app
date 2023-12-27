@@ -1,9 +1,9 @@
-import 'package:flutter_survey_app/data/http/http.dart';
-
 import '../../domain/entities/entities.dart';
 import '../../domain/helpers/helpers.dart';
 import '../../domain/usecases/usecases.dart';
 import '../models/models.dart';
+
+import '../http/http.dart';
 
 import 'usecases.dart';
 

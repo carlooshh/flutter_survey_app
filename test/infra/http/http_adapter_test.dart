@@ -115,5 +115,18 @@ void main() {
       // Assert
       expect(response, null);
     });
+
+    test("Shoul return null if post return 204", () async {
+      mockResponse().thenAnswer((_) async => Response('', 204));
+
+      // Act
+      final response = await sut.request(
+        url: url,
+        method: 'post',
+      );
+
+      // Assert
+      expect(response, null);
+    });
   });
 }

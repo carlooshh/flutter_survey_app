@@ -23,6 +23,10 @@ class RemoteAuthentication implements Authentication {
       final httpResponse =
           await httpClient.request(url: url, method: 'post', body: body);
 
+      if (httpResponse == null) {
+        throw DomainError.unexpected;
+      }
+
       return RemoteAccountModel.fromJson(httpResponse).toEntity();
     } on HttpError catch (error) {
       if (error == HttpError.unauthorized) {

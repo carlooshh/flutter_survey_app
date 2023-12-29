@@ -7,22 +7,26 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
 import 'http_adapter_test.mocks.dart';
+import 'package:flutter_survey_app/data/http/http_client.dart';
 
-class HttpAdapter {
+class HttpAdapter implements HttpClient {
   final Client client;
 
   HttpAdapter(this.client);
 
-  Future<void> request(
+  @override
+  Future<Map?> request(
       {required String url, required String method, Map? body}) async {
     final jsonBody = body != null ? jsonEncode(body) : null;
 
-    await client.post(Uri.parse(url),
+    final response = await client.post(Uri.parse(url),
         headers: {
           'content-type': 'application/json',
           'accept': 'application/json'
         },
         body: jsonBody);
+
+    return response.body.isEmpty ? null : jsonDecode(response.body);
   }
 }
 
@@ -40,15 +44,41 @@ void main() {
     body = {'any_key': 'any_value'};
   });
 
-  test("Shoul call http lib with the correct params", () {
-    when(client.post(any, body: anyNamed('body'), headers: anyNamed('headers')))
-        .thenAnswer((_) async => Response('', 200));
+  group('post', () {
+    PostExpectation mockResponse() => when(
+        client.post(any, body: anyNamed('body'), headers: anyNamed('headers')));
 
-    // Act
-    sut.request(url: url, method: 'post', body: body);
+    test("Shoul call http lib with the correct params", () {
+      mockResponse()
+          .thenAnswer((_) async => Response('{"any_key": "any_value"}', 200));
 
-    // Assert
-    verify(client.post(
+      // Act
+      sut.request(url: url, method: 'post', body: body);
+
+      // Assert
+      verify(client.post(
+          Uri.parse(
+            url,
+          ),
+          headers: {
+            'content-type': 'application/json',
+            'accept': 'application/json'
+          },
+          body: jsonEncode(body)));
+    });
+
+    test("Shoul call http lib without body param", () {
+      mockResponse()
+          .thenAnswer((_) async => Response('{"any_key": "any_value"}', 200));
+
+      // Act
+      sut.request(
+        url: url,
+        method: 'post',
+      );
+
+      // Assert
+      verify(client.post(
         Uri.parse(
           url,
         ),
@@ -56,28 +86,34 @@ void main() {
           'content-type': 'application/json',
           'accept': 'application/json'
         },
-        body: jsonEncode(body)));
-  });
+      ));
+    });
 
-  test("Shoul call http lib without body param", () {
-    when(client.post(any, body: anyNamed('body'), headers: anyNamed('headers')))
-        .thenAnswer((_) async => Response('', 200));
+    test("Shoul return data if post return 200", () async {
+      mockResponse()
+          .thenAnswer((_) async => Response('{"any_key": "any_value"}', 200));
 
-    // Act
-    sut.request(
-      url: url,
-      method: 'post',
-    );
+      // Act
+      final response = await sut.request(
+        url: url,
+        method: 'post',
+      );
 
-    // Assert
-    verify(client.post(
-      Uri.parse(
-        url,
-      ),
-      headers: {
-        'content-type': 'application/json',
-        'accept': 'application/json'
-      },
-    ));
+      // Assert
+      expect(response, {'any_key': 'any_value'});
+    });
+
+    test("Shoul return null if post return 200 without data", () async {
+      mockResponse().thenAnswer((_) async => Response('', 200));
+
+      // Act
+      final response = await sut.request(
+        url: url,
+        method: 'post',
+      );
+
+      // Assert
+      expect(response, null);
+    });
   });
 }

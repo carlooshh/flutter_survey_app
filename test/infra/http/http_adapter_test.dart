@@ -5,34 +5,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-
 import 'http_adapter_test.mocks.dart';
-import 'package:flutter_survey_app/data/http/http_client.dart';
 
-class HttpAdapter implements HttpClient {
-  final Client client;
-
-  HttpAdapter(this.client);
-
-  @override
-  Future<Map?> request(
-      {required String url, required String method, Map? body}) async {
-    final jsonBody = body != null ? jsonEncode(body) : null;
-
-    final response = await client.post(Uri.parse(url),
-        headers: {
-          'content-type': 'application/json',
-          'accept': 'application/json'
-        },
-        body: jsonBody);
-
-    if (response.statusCode == 204) {
-      return null;
-    }
-
-    return response.body.isEmpty ? null : jsonDecode(response.body);
-  }
-}
+import 'package:flutter_survey_app/infra/http/http.dart';
 
 @GenerateMocks([Client])
 void main() {

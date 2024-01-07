@@ -10,11 +10,11 @@
 
 > ## Erros
 
-1. Bad Request - 400
-2. Unauthorized - 401
-3. Forbidden - 403
-4. Not found - 404
-5. Internal server error - 500
+1. ✅ Bad Request - 400
+2. ✅ Unauthorized - 401
+3. ✅ Forbidden - 403
+4. ✅ Not found - 404
+5. ✅ Internal server error - 500
 
 > ## Exceção - status code diferente dos citados acima
 

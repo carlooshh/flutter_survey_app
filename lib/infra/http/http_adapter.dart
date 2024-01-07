@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter_survey_app/data/http/http_error.dart';
 import 'package:http/http.dart';
 
 import '../../data/http/http_client.dart';
@@ -21,9 +22,17 @@ class HttpAdapter implements HttpClient {
         },
         body: jsonBody);
 
-    if (response.statusCode == 204) {
-      return null;
-    }
+    if (response.statusCode == 400) throw HttpError.badRequest;
+
+    if (response.statusCode == 401) throw HttpError.unauthorized;
+
+    if (response.statusCode == 403) throw HttpError.forbidden;
+
+    if (response.statusCode == 404) throw HttpError.notFound;
+
+    if (response.statusCode == 500) throw HttpError.serverError;
+
+    if (response.statusCode == 204) return null;
 
     return response.body.isEmpty ? null : jsonDecode(response.body);
   }

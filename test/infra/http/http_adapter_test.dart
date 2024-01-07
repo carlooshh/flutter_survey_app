@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:faker/faker.dart';
+import 'package:flutter_survey_app/data/http/http.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
 import 'package:mockito/annotations.dart';
@@ -120,6 +121,76 @@ void main() {
 
       // Assert
       expect(response, null);
+    });
+
+    test("Shoul return BadRequestError if post return 400", () async {
+      mockResponse()
+          .thenAnswer((_) async => Response('{"any_key": "any_value"}', 400));
+
+      // Act
+      final future = sut.request(
+        url: url,
+        method: 'post',
+      );
+
+      // Assert
+      expect(future, throwsA(HttpError.badRequest));
+    });
+
+    test("Shoul return BadRequestError if post return 500", () async {
+      mockResponse()
+          .thenAnswer((_) async => Response('{"any_key": "any_value"}', 500));
+
+      // Act
+      final future = sut.request(
+        url: url,
+        method: 'post',
+      );
+
+      // Assert
+      expect(future, throwsA(HttpError.serverError));
+    });
+
+    test("Shoul return BadRequestError if post return 401", () async {
+      mockResponse()
+          .thenAnswer((_) async => Response('{"any_key": "any_value"}', 401));
+
+      // Act
+      final future = sut.request(
+        url: url,
+        method: 'post',
+      );
+
+      // Assert
+      expect(future, throwsA(HttpError.unauthorized));
+    });
+
+    test("Shoul return ForbiddenError if post return 403", () async {
+      mockResponse()
+          .thenAnswer((_) async => Response('{"any_key": "any_value"}', 403));
+
+      // Act
+      final future = sut.request(
+        url: url,
+        method: 'post',
+      );
+
+      // Assert
+      expect(future, throwsA(HttpError.forbidden));
+    });
+
+    test("Shoul return NotFoundError if post return 404", () async {
+      mockResponse()
+          .thenAnswer((_) async => Response('{"any_key": "any_value"}', 404));
+
+      // Act
+      final future = sut.request(
+        url: url,
+        method: 'post',
+      );
+
+      // Assert
+      expect(future, throwsA(HttpError.notFound));
     });
   });
 }

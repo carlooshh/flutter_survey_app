@@ -18,7 +18,7 @@
 
 > ## Exceção - status code diferente dos citados acima
 
-1. Internal server error - 500
+1. ✅ Internal server error - 500
 
 > ## Exceção - http request deu alguma exceção
 

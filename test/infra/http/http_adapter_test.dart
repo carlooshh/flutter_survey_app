@@ -137,7 +137,7 @@ void main() {
       expect(future, throwsA(HttpError.badRequest));
     });
 
-    test("Shoul return BadRequestError if post return 500", () async {
+    test("Shoul return ServerError if post return 500", () async {
       mockResponse()
           .thenAnswer((_) async => Response('{"any_key": "any_value"}', 500));
 
@@ -151,7 +151,7 @@ void main() {
       expect(future, throwsA(HttpError.serverError));
     });
 
-    test("Shoul return BadRequestError if post return 401", () async {
+    test("Shoul return UnauthorizedError if post return 401", () async {
       mockResponse()
           .thenAnswer((_) async => Response('{"any_key": "any_value"}', 401));
 

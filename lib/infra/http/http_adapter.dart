@@ -15,16 +15,21 @@ class HttpAdapter implements HttpClient {
       {required String url, required String method, Map? body}) async {
     final jsonBody = body != null ? jsonEncode(body) : null;
 
-    if (method != 'post') {
+    var response = Response('', 500);
+    try {
+      if (method != 'post') {
+        throw HttpError.serverError;
+      }
+
+      response = await client.post(Uri.parse(url),
+          headers: {
+            'content-type': 'application/json',
+            'accept': 'application/json'
+          },
+          body: jsonBody);
+    } catch (e) {
       throw HttpError.serverError;
     }
-
-    final response = await client.post(Uri.parse(url),
-        headers: {
-          'content-type': 'application/json',
-          'accept': 'application/json'
-        },
-        body: jsonBody);
 
     if (response.statusCode == 400) throw HttpError.badRequest;
 

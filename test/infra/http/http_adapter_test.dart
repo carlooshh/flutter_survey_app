@@ -205,5 +205,18 @@ void main() {
       // Assert
       expect(future, throwsA(HttpError.notFound));
     });
+
+    test("Shoul return ServerError if post throws an exception", () async {
+      mockResponse().thenThrow(Exception());
+
+      // Act
+      final future = sut.request(
+        url: url,
+        method: 'post',
+      );
+
+      // Assert
+      expect(future, throwsA(HttpError.notFound));
+    });
   });
 }
